@@ -79,10 +79,11 @@ $uniqueSoftwareTable = $softwareNamesTable | sort-object -Property softwareName 
 "Software count for all sites: " + $softwareUseTable.Length
 "Unique software count: "        + $uniqueSoftwareTable.Length
 
-$softwareUseTable | Export-Csv -Path $allResultsFilePath -NoTypeInformation
+"Exporting reports"
+$softwareUseTable    | Export-Csv -Path $allResultsFilePath -NoTypeInformation
 $uniqueSoftwareTable | Export-Csv -Path $uniqueResultsFilePath -NoTypeInformation
 
 
-#explorer $scriptRoot\results
-#pause
+explorer $scriptRoot\results
+pause
 exit
