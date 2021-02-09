@@ -1,14 +1,16 @@
 Add-Type -AssemblyName PresentationFramework
 $scriptRoot     = $PSScriptRoot
 $csvpath        = "$scriptRoot\csv"
-$resultspath    = "$scriptRoot\results"
+$resultspath    = "$scriptRoot\results\"
 
 
 #init
-$date = Get-Date -Format yyyy-MM-dd
-$resultsFilePath     = $resultspath + "results - " + $date+".csv"
-$softwareUseTable    = @()
-$uniqueSoftwareTable = @()
+$date = Get-Date -Format yyyy-MM-dd_mmSS
+$allResultsFilePath     = $resultspath + "all_results - " + $date+".csv"
+$uniqueResultsFilePath  = $resultspath + "unique_results - " + $date+".csv"
+$softwareUseTable       = @()
+$softwareNamesTable     = @()
+$uniqueSoftwareTable    = @()
 
 if (!(test-path -path $csvpath)) {
     mkdir $csvpath
@@ -62,12 +64,23 @@ Foreach-Object {
     }
 }
 
-$softwareUseTable
 
+#Build unique software list
 foreach ($row in $softwareUseTable) {
-    #
-    
+    $softwareNamesTable += [PSCustomObject]@{
+        softwareName    = $row.softwareName
+        softwareVersion = $row.softwareVersion
+    }
 }
+#sort, and remove duplicates
+$uniqueSoftwareTable = $softwareNamesTable | sort-object -Property softwareName -Unique
+
+
+"Software count for all sites: " + $softwareUseTable.Length
+"Unique software count: "        + $uniqueSoftwareTable.Length
+
+$softwareUseTable | Export-Csv -Path $allResultsFilePath -NoTypeInformation
+$uniqueSoftwareTable | Export-Csv -Path $uniqueResultsFilePath -NoTypeInformation
 
 
 #explorer $scriptRoot\results
