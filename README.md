@@ -15,4 +15,5 @@ Prototype script to compile list of software identified by Nessus plugin 20811.
 
 4. Your results will show in ~\sofware-list-from-ACAS-ps1\results as two files:
     _A list of each instance of software installed on each host, for each repository_
+    
     _A list of of unique software names installed across for all hosts_
