@@ -5,7 +5,7 @@ $resultspath    = "$scriptRoot\results\"
 
 
 #init
-$date = Get-Date -Format yyyy-MM-dd_mmSS
+$date = Get-Date -Format yyyy-MM-dd_mmss
 $allResultsFilePath     = $resultspath + "all_results - " + $date+".csv"
 $uniqueResultsFilePath  = $resultspath + "unique_results - " + $date+".csv"
 $softwareUseTable       = @()
@@ -24,10 +24,11 @@ if (!(test-path -path $resultspath)) {
 }
 
 
-#import scans
+"Starting Import"
 Get-ChildItem $csvpath  -Filter *.csv | 
 Foreach-Object {
-    $csvImport = Import-Csv $_.FullName
+    "Importing $_"
+    $csvImport = Import-Csv $_.FullName -WarningAction Continue
     foreach ($line in $csvImport) {
         if ($line.plugin -eq "20811") {
             
@@ -51,7 +52,6 @@ Foreach-Object {
                         #the line has no version
                         $softwareVersion = ""
                     }
-
                     $softwareUseTable += [PSCustomObject]@{
                         softwareName    = $softwareName
                         softwareVersion = $softwareVersion
@@ -66,6 +66,7 @@ Foreach-Object {
 
 
 #Build unique software list
+"Building unique software list"
 foreach ($row in $softwareUseTable) {
     $softwareNamesTable += [PSCustomObject]@{
         softwareName    = $row.softwareName
@@ -73,6 +74,7 @@ foreach ($row in $softwareUseTable) {
     }
 }
 #sort, and remove duplicates
+"Sorting and removing duplicates"
 $uniqueSoftwareTable = $softwareNamesTable | sort-object -Property softwareName -Unique
 
 
@@ -85,5 +87,4 @@ $uniqueSoftwareTable | Export-Csv -Path $uniqueResultsFilePath -NoTypeInformatio
 
 
 explorer $scriptRoot\results
-pause
-exit
+
